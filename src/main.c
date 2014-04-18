@@ -2018,6 +2018,20 @@ void tree(Block *block) {
     }
 }
 
+void game_set_online(const char* server_addr, int server_port) {
+    g->mode_changed = 1;
+    g->mode = MODE_ONLINE;
+    snprintf(g->server_addr, MAX_ADDR_LENGTH, "%s", server_addr);
+    g->server_port = server_port;
+    snprintf(g->db_path, MAX_PATH_LENGTH, "cache.%s.%d.db", server_addr, server_port);
+}
+
+void game_set_offline(const char* db_path) {
+    g->mode_changed = 1;
+    g->mode = MODE_OFFLINE;
+    snprintf(g->db_path, MAX_PATH_LENGTH, "%s", db_path);
+}
+
 void parse_command(const char *buffer, int forward) {
     char username[128] = {0};
     char token[128] = {0};
@@ -2045,22 +2059,13 @@ void parse_command(const char *buffer, int forward) {
     else if (sscanf(buffer,
         "/online %128s %d", server_addr, &server_port) >= 1)
     {
-        g->mode_changed = 1;
-        g->mode = MODE_ONLINE;
-        strncpy(g->server_addr, server_addr, MAX_ADDR_LENGTH);
-        g->server_port = server_port;
-        snprintf(g->db_path, MAX_PATH_LENGTH,
-            "cache.%s.%d.db", g->server_addr, g->server_port);
+        game_set_online(server_addr, server_port);
     }
     else if (sscanf(buffer, "/offline %128s", filename) == 1) {
-        g->mode_changed = 1;
-        g->mode = MODE_OFFLINE;
-        snprintf(g->db_path, MAX_PATH_LENGTH, "%s.db", filename);
+        game_set_offline(filename);
     }
     else if (strcmp(buffer, "/offline") == 0) {
-        g->mode_changed = 1;
-        g->mode = MODE_OFFLINE;
-        snprintf(g->db_path, MAX_PATH_LENGTH, "%s", DB_PATH);
+        game_set_offline(DB_PATH);
     }
     else if (sscanf(buffer, "/view %d", &radius) == 1) {
         if (radius >= 1 && radius <= 24) {
@@ -2700,17 +2705,15 @@ int main(int argc, char **argv) {
 
     // CHECK COMMAND LINE ARGUMENTS //
     if (argc == 2 || argc == 3) {
-        g->mode = MODE_ONLINE;
-        strncpy(g->server_addr, argv[1], MAX_ADDR_LENGTH);
-        g->server_port = argc == 3 ? atoi(argv[2]) : DEFAULT_PORT;
-        snprintf(g->db_path, MAX_PATH_LENGTH,
-            "cache.%s.%d.db", g->server_addr, g->server_port);
+        int server_port = argc == 3 ? atoi(argv[2]) : DEFAULT_PORT;
+        game_set_online(argv[1], server_port);
     }
     else {
-        g->mode = MODE_OFFLINE;
-        snprintf(g->db_path, MAX_PATH_LENGTH, "%s", DB_PATH);
+        game_set_offline(DB_PATH);
     }
+    g->mode_changed = 0;
 
+    // COPY DEFAULT VALUES //
     g->create_radius = CREATE_CHUNK_RADIUS;
     g->render_radius = RENDER_CHUNK_RADIUS;
     g->delete_radius = DELETE_CHUNK_RADIUS;
