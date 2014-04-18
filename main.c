@@ -1,4 +1,4 @@
-#define GLFW_INCLUDE_GLCOREARB
+#define GLFW_INCLUDE_ES3
 
 #include <GLFW/glfw3.h>
 #include <math.h>
@@ -845,8 +845,8 @@ int main(int argc, char **argv) {
     glGenFramebuffers(SHADOW_TEXTURES, shadow_frame_buffers);
     for (int i = 0; i < SHADOW_TEXTURES; i++) {
         glBindFramebuffer(GL_FRAMEBUFFER, shadow_frame_buffers[i]);
-        glFramebufferTexture(
-            GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadow_textures[i], 0);
+        glFramebufferRenderbuffer(
+            GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, shadow_textures[i]);
         glDrawBuffer(GL_NONE);
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

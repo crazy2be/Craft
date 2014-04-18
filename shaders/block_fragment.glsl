@@ -1,4 +1,4 @@
-#version 330 core
+#version 130
 
 uniform sampler2D sampler;
 uniform sampler2D shadow_map1;

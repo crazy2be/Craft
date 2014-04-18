@@ -1,4 +1,4 @@
-#version 330 core
+#version 130
 
 uniform mat4 matrix;
 uniform mat4 shadow_map_matrix1;
