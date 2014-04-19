@@ -1,9 +1,8 @@
-#ifndef _cube_h_
-#define _cube_h_
+#pragma once
+#include <stdbool.h>
 
 void make_cube(
-    float *data, float ao[6][4], float light[6][4],
-    int left, int right, int top, int bottom, int front, int back,
+    float *data, float ao[6][4], float light[6][4], bool faces[6],
     float x, float y, float z, float n, int w);
 
 void make_plant(
@@ -25,5 +24,3 @@ void make_character_3d(
     float *data, float x, float y, float z, float n, int face, char c);
 
 void make_sphere(float *data, float r, int detail);
-
-#endif

@@ -265,7 +265,8 @@ GLuint gen_cube_buffer(float x, float y, float z, float n, int w) {
         {0.5, 0.5, 0.5, 0.5},
         {0.5, 0.5, 0.5, 0.5}
     };
-    make_cube(data, ao, light, 1, 1, 1, 1, 1, 1, x, y, z, n, w);
+    bool faces[6] = {true, true, true, true, true, true};
+    make_cube(data, ao, light, faces, x, y, z, n, w);
     return gen_faces(10, 6, data);
 }
 
@@ -1115,10 +1116,8 @@ void compute_chunk(WorkerItem *item) {
                 ex, ey, ez, 0.5, ew, rotation);
         }
         else {
-            make_cube(
-                data + offset, ao, light,
-                f1, f2, f3, f4, f5, f6,
-                ex, ey, ez, 0.5, ew);
+            bool faces[6] = {f1, f2, f3, f4, f5, f6};
+            make_cube(data + offset, ao, light, faces, ex, ey, ez, 0.5, ew);
         }
         offset += total * 60;
     } END_MAP_FOR_EACH;

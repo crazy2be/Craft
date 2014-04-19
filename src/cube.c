@@ -1,5 +1,4 @@
 #include <math.h>
-#include <stdbool.h>
 #include "cube.h"
 #include "item.h"
 #include "matrix.h"
@@ -78,11 +77,9 @@ static void make_cube_faces(
 }
 
 void make_cube(
-    float *data, float ao[6][4], float light[6][4],
-    int left, int right, int top, int bottom, int front, int back,
+    float *data, float ao[6][4], float light[6][4], bool faces[6],
     float x, float y, float z, float n, int w)
 {
-    bool faces[6] = {left, right, top, bottom, front, back};
     int* tiles = (int*)blocks[w];
     make_cube_faces(data, ao, light, faces, tiles, x, y, z, n);
 }
