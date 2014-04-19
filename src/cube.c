@@ -1,13 +1,12 @@
 #include <math.h>
+#include <stdbool.h>
 #include "cube.h"
 #include "item.h"
 #include "matrix.h"
 #include "util.h"
 
-void make_cube_faces(
-    float *data, float ao[6][4], float light[6][4],
-    int left, int right, int top, int bottom, int front, int back,
-    int wleft, int wright, int wtop, int wbottom, int wfront, int wback,
+static void make_cube_faces(
+    float *data, float ao[6][4], float light[6][4], bool faces[6], int tiles[6],
     float x, float y, float z, float n)
 {
     static const float positions[6][4][3] = {
@@ -55,10 +54,8 @@ void make_cube_faces(
     float pad = 1/2048.0;
     float a = 0 + pad;
     float b = s - pad;
-    int faces[6] = {left, right, top, bottom, front, back};
-    int tiles[6] = {wleft, wright, wtop, wbottom, wfront, wback};
     for (int i = 0; i < 6; i++) {
-        if (faces[i] == 0) {
+        if (faces[i] == false) {
             continue;
         }
         float du = (tiles[i] % 16) * s;
@@ -85,17 +82,9 @@ void make_cube(
     int left, int right, int top, int bottom, int front, int back,
     float x, float y, float z, float n, int w)
 {
-    int wleft = blocks[w][0];
-    int wright = blocks[w][1];
-    int wtop = blocks[w][2];
-    int wbottom = blocks[w][3];
-    int wfront = blocks[w][4];
-    int wback = blocks[w][5];
-    make_cube_faces(
-        data, ao, light,
-        left, right, top, bottom, front, back,
-        wleft, wright, wtop, wbottom, wfront, wback,
-        x, y, z, n);
+    bool faces[6] = {left, right, top, bottom, front, back};
+    int* tiles = (int*)blocks[w];
+    make_cube_faces(data, ao, light, faces, tiles, x, y, z, n);
 }
 
 void make_plant(
@@ -171,11 +160,10 @@ void make_player(
         {0.8, 0.8, 0.8, 0.8},
         {0.8, 0.8, 0.8, 0.8}
     };
-    make_cube_faces(
-        data, ao, light,
-        1, 1, 1, 1, 1, 1,
-        226, 224, 241, 209, 225, 227,
-        0, 0, 0, 0.4);
+    bool faces[6] = {true, true, true, true, true, true};
+    int tiles[6] = {226, 224, 241, 209, 225, 227};
+    make_cube_faces(data, ao, light, faces, tiles, 0, 0, 0, 0.4);
+
     float ma[16];
     float mb[16];
     mat_identity(ma);
