@@ -51,9 +51,10 @@ void make_cube_faces(
         {0, 2, 1, 2, 3, 1}
     };
     float *d = data;
-    float s = 0.0625;
-    float a = 0 + 1 / 2048.0;
-    float b = s - 1 / 2048.0;
+    float s = 1/16.0;
+    float pad = 1/2048.0;
+    float a = 0 + pad;
+    float b = s - pad;
     int faces[6] = {left, right, top, bottom, front, back};
     int tiles[6] = {wleft, wright, wtop, wbottom, wfront, wback};
     for (int i = 0; i < 6; i++) {
